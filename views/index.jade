@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1= title
+  
+  body
+  ul
+    li
+      a(class='button', href='http://jenkinsqa.corp.dotloop.com:8080') Jenkins
+      br
+    each record, i in records
+      li
+        a(href=record.regressionurl)= record.regressionname
+
+    br
+    li
+      a(class='button', href='tools') Tools
