@@ -2,16 +2,31 @@ extends layout
 
 block content
   h1= title
-  
-  body
-  ul
-    li
-      a(class='button', href='http://jenkinsqa.corp.dotloop.com:8080') Jenkins
-      br
-    each record, i in records
-      li
-        a(href=record.regressionurl)= record.regressionname
 
-    br
-    li
-      a(class='button', href='tools') Tools
+  body
+    ul.tabs
+      li.labels
+        label#label1(for='tab1') Regression Sheets
+        label#label2(for='tab2') Links
+        label#label3(for='tab3') Tools
+      li
+        input#tab1(type='radio', checked='', name='tabs')
+        #tab-content3.tab-content
+          h3 Regression Sheets
+          each record, i in records
+            a(href=record.regressionurl)= record.regressionname
+            br
+      li
+        input#tab2(type='radio', name='tabs')
+        #tab-content2.tab-content
+          h3 Links
+          a(class='button', href='http://jenkinsqa.corp.dotloop.com:8080') Jenkins
+      li
+        input#tab3(type='radio', name='tabs')
+        #tab-content1.tab-content
+          h3 Tools
+          a(class='button', href='tools/restart') RESTART JENKINS
+
+    
+    
+    

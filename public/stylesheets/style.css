@@ -1,8 +1,77 @@
+h1 {
+  font-weight: normal;
+  font-size: 40px;
+  color: #FFFFFF;
+  font-weight: normal;
+  text-transform: uppercase;
+  margin: 20px 0 50px 10px; 
+  span { 
+    font-size: 13px;
+    display: block;
+    padding-left: 4px;
+  }
+}
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: #4449ad; 
 }
 
+
 a {
-  color: #00B7FF;
+  color: #e0e1a;
+}
+
+.tabs input[type=radio] {
+    display:none;
+}
+  
+.tabs {
+    width: 650px;
+    float: none;
+    list-style: none;
+    padding: 0;
+    margin: 75px auto;
+}
+  
+.tabs li {
+    display: block;
+}
+ 
+.labels:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+ 
+.tabs label {
+    display: inline-block;
+    float: left;
+    padding: 10px 20px;
+    color: #FFFFFF;
+    font-size: 24px;
+    font-weight: normal;
+    background: #2c3e50;
+    cursor: pointer;
+}
+  
+.tabs label:hover {
+    background: #8e93f6;
+}
+  
+.tab-content {
+    display: none;
+    width: 100%;
+    padding: 15px;
+    background-color:#8e93f6;
+}
+
+[id^=tab]:checked + label { 
+    top: 0;
+    padding-top: 17px; 
+    background: darken(#8e93f6, 15); 
+}
+
+[id^=tab]:checked ~ div[id^=tab-content] {
+    display: block;
 }
