@@ -5,12 +5,9 @@ block content
 
   body
     ul.tabs
-      li.labels
-        label#label1(for='tab1') Regression Sheets
-        label#label2(for='tab2') Links
-        label#label3(for='tab3') Tools
       li
         input#tab1(type='radio', checked='', name='tabs')
+        label#label1(for='tab1') Regression Sheets
         #tab-content3.tab-content
           h3 Regression Sheets
           each sheet, i in sheets
@@ -18,6 +15,7 @@ block content
             br
       li
         input#tab2(type='radio', name='tabs')
+        label#label2(for='tab2') Links
         #tab-content2.tab-content
           h3 Links
           each link, j in links
@@ -25,10 +23,12 @@ block content
             br
       li
         input#tab3(type='radio', name='tabs')
+        label#label3(for='tab3') Tools
         #tab-content1.tab-content
           h3 Tools
           each tool, k in tools
             a(href=tool.toolurl)= tool.toolname
+            br
             br
 
     
