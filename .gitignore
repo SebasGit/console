@@ -12,6 +12,7 @@ $RECYCLE.BIN/
 node_modules
 data
 *~
+scripts
 
 # Windows Installer files
 *.cab
