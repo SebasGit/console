@@ -1,0 +1,10 @@
+extends layout
+head
+
+
+block content
+  h1= title
+  body
+    each screenshot, i in screenshots	
+      a.screenshots(href='/tools/download?id='+screenshot.ssId, data-lightbox='example-set', data-title=screenshot.testname)
+        img.screenshots(src='/tools/download?id='+screenshot.ssId, alt='')

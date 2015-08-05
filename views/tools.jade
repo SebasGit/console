@@ -1,10 +1,9 @@
 extends layout
 
 block content
-  h1= title
-  
-  body
-  a(class='button', href='http://jenkinsqa.corp.dotloop.com') back
-  br
-  br
-  a(class='button', href='tools/restart') RESTART JENKINS
+  form(method='post', enctype='multipart/form-data', action='picture')
+    input(type='text', name='release')
+    input(type='text', name='classname')
+    input(type='text', name='testname')
+    input(type='file', name='file')
+    input(type='submit', value='Submit')

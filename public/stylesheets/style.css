@@ -90,3 +90,10 @@ a {
 [id^=tab]:checked ~ div[id^=tab-content] {
     display: block;
 }
+
+img.screenshots {
+  width:auto;
+  height:30%;
+  max-height:500px;
+  margin:20px;
+}
