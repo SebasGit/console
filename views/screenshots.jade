@@ -5,6 +5,32 @@ head
 block content
   h1= title
   body
-    each screenshot, i in screenshots	
-      a.screenshots(href='/tools/download?id='+screenshot.ssId, data-lightbox='example-set', data-title=screenshot.testname)
-        img.screenshots(src='/tools/download?id='+screenshot.ssId, alt='')
+    //each screenshot, i in screenshots	
+     a.screenshots(href='/tools/screenshot/'+screenshot.ssId, data-lightbox='example-set', data-title=screenshot.testname)
+        img.screenshots(src='/tools/screenshot/'+screenshot.ssId, alt='')
+    #screenshots
+      .screenshotContainer
+        img(src='img/placeholder.png')
+        ul
+          li Title
+          li Author
+          li Release date
+          li Keywords
+      script#ssTemplate(type='text/template').
+        img src=<%= image >
+        ul
+        li<%= ssId >
+        li<%= release >
+        li<%= classname >
+        li<%= testname >
+        li<%= unverified >
+        
+
+
+
+
+script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js')
+script(src='http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js')
+script(src='http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js')
+script(src='http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js')
+script(src='/js/main.js')

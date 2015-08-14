@@ -9,7 +9,6 @@ var expressMongoDb = require('express-mongo-db');
 
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var tools = require('./routes/tools');
 var screenshots = require('./routes/screenshots');
 
@@ -29,7 +28,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressMongoDb('mongodb://localhost/console'));
 
 app.use('/', routes);
-app.use('/users', users);
 app.use('/tools', tools);
 app.use('/screenshots', screenshots);
 

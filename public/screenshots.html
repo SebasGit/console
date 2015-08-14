@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Backbone.js Web App</title>
+    <link rel="stylesheet" href="stylesheets/screen.css">
+</head>
+<body>
+<div id="screenshots">
+	<label><input type="checkbox" class="filter-verified"/> Show Verified</label>
+	<div id="screenshotList"/>
+<div/>
+<script id="screenshotTemplate" type="text/template">
+    <div class="labelContainer"><%= release%></div>
+    <div class="labelContainer"><%= classname%></div>
+    <div class="labelContainer"><%= testname%></div>
+    <br>
+	<img class="ssImage" src="tools/screenshot/<%= ssId%>/download"</>
+	<br>
+    <input type="image" src="unchecked.png" <% if (!unverified) { %> style="display:none" <% }%> class="verify"/>
+    <input type="image" src="checked.png" <% if (unverified) { %> style="display:none" <% }%> class="unverify"/>
+</script>
+<script src="/js/jquery-1.11.3.min.js"></script>
+<script src="/js/underscore-min.js"></script>
+<script src="/js/backbone-min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

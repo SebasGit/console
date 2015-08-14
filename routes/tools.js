@@ -9,29 +9,36 @@ var router = express.Router();
 var child1;
 var child2;
 
-router.post('/picture', upload.single('file'), function (req, res, next) {
+router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	db = req.db
 	var gfs = Grid(db, mongo);
+	var release = req.body.release;
+	var classname = req.body.classname;
+	var testname = req.body.testname;
+	var collection = db.collection('usercollection');
+	collection.find({release: release, classname: classname, testname: testname}).toArray(function(err, screenshots) {
+		screenshots.forEach(function(screenshot) {
+			console.log(screenshot.ssId);
+			gfs.remove({"_id":screenshot.ssId});
+			collection.remove({"_id":screenshot._id});
+		});
+	});
 	var writestream = gfs.createWriteStream({ 
 	    filename: req.file.originalname
 	});
 	writestream.on('close', function (file) {
-		var release = req.body.release;
-		var classname = req.body.classname;
-		var testname = req.body.testname;
-		var collection = db.get('usercollection');
-	
 		collection.insert({
-				"type" : "screenshot",
-				"ssId" : file._id.toString(),
-				"release" : release,
-				"classname" : classname,
-				"testname" : testname,
-				"unverified" : true
+			"type" : "screenshot",
+			"ssId" : file._id.toString(),
+			"release" : release,
+			"classname" : classname,
+			"testname" : testname,
+			"unverified" : true
 		});
     });
 	fs.createReadStream(req.file.path)
     	.on('end', function() {
+    	fs.unlink(req.file.path);
     	res.send('OK');
   	})
   	.on('error', function() {
@@ -40,10 +47,76 @@ router.post('/picture', upload.single('file'), function (req, res, next) {
     .pipe(writestream);
 });
 
-router.get('/download', function(req, res) {
+router.put('/screenshot/:id', function(req, res) {
+	var collection = req.db.collection('usercollection');
+	
+	collection.update({ssId:req.body.ssId}, {$set: {
+			"unverified" : req.body.unverified
+	}}, function (err, doc) {
+		if (err) {
+			res.send("failed to update");
+		} else {
+			res.send("Update successful");
+		}
+	});
+
+});
+
+router.get('/screenshot', function(req, res) {
+	var collection = req.db.collection('usercollection');
+	if (req.query.verified === "true") {
+		    collection.find({type: "screenshot"}, {sort: {_id: 1}}).toArray(function(err, screenshots) {
+    		res.send(screenshots);
+    	});
+	} else {
+    	collection.find({type: "screenshot", unverified: true}, {sort: {_id: 1}}).toArray(function(err, screenshots) {
+    		res.send(screenshots);
+    	});
+    }
+});
+
+router.get('/screenshot/:id', function(req, res) {
+	var collection = req.db.collection('usercollection');
+    collection.findOne({ssId: req.params.id}, function(err, screenshot) {
+    	res.send(screenshot);
+    });
+});
+
+router.get('/screenshot/:id/download', function(req, res) {
 	var gfs = Grid(req.db, mongo);
 	res.set('Content-Type', 'image/jpeg');
-    gfs.createReadStream({ _id:req.param('id') }).pipe(res);
+    gfs.createReadStream({ _id:req.params.id}).pipe(res);
+});
+
+
+router.get('/releases', function(req, res) {
+	var collection = req.db.collection('usercollection');
+	collection.distinct('release', function(err, docs) {
+		res.send(docs);
+	});
+});
+
+router.get('/classnames', function(req, res) {
+	if (req.query.release) {
+		var collection = req.db.collection('usercollection');
+		collection.distinct('classname', {'release':req.query.release}, function(err, docs) {
+			res.send(docs);
+		});
+	} else {
+		res.send('');
+	}
+});
+
+
+router.get('/testnames', function(req, res) {
+	if (req.query.release && req.query.classname) {
+		var collection = req.db.collection('usercollection');
+		collection.distinct('testname', {'release':req.query.release, 'classname':req.query.classname}, function(err, docs) {
+			res.send(docs);
+		});
+	} else {
+		res.send('');
+	}
 });
 
 router.get('/', function(req, res, next) {
@@ -67,7 +140,7 @@ router.post('/updatesheet', function(req, res) {
 	var type = req.body.type;
 	var regressionname = req.body.regressionname;
 	var regressionurl = req.body.regressionurl;
-	var collection = req.db.get('usercollection');
+	var collection = req.db.collection('usercollection');
 	
 	collection.insert({
 			"type" : type,
