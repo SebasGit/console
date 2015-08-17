@@ -33,7 +33,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 			"release" : release,
 			"classname" : classname,
 			"testname" : testname,
-			"unverified" : true
+			"verified" : false
 		});
     });
 	fs.createReadStream(req.file.path)
@@ -51,7 +51,8 @@ router.put('/screenshot/:id', function(req, res) {
 	var collection = req.db.collection('usercollection');
 	
 	collection.update({ssId:req.body.ssId}, {$set: {
-			"unverified" : req.body.unverified
+			"verified" : req.body.verified,
+			"qename" : req.body.qename
 	}}, function (err, doc) {
 		if (err) {
 			res.send("failed to update");
@@ -63,16 +64,27 @@ router.put('/screenshot/:id', function(req, res) {
 });
 
 router.get('/screenshot', function(req, res) {
+	var params = {type: "screenshot"};
 	var collection = req.db.collection('usercollection');
-	if (req.query.verified === "true") {
-		    collection.find({type: "screenshot"}, {sort: {_id: 1}}).toArray(function(err, screenshots) {
-    		res.send(screenshots);
-    	});
-	} else {
-    	collection.find({type: "screenshot", unverified: true}, {sort: {_id: 1}}).toArray(function(err, screenshots) {
-    		res.send(screenshots);
-    	});
-    }
+	if (req.query.verified == "false") {
+		params["verified"] = false;
+	}
+	
+	if (req.query.release && !(req.query.release=="All Releases")) {
+		params["release"] = req.query.release;
+	}
+	
+	if (req.query.classname && !(req.query.classname=="All Categories")) {
+		params["classname"] = req.query.classname;
+	}
+	
+	if (req.query.testname && !(req.query.testname=="All Tests")) {
+		params["testname"] = req.query.testname;
+	}
+    
+    collection.find(params, {sort: {_id: 1}}).toArray(function(err, screenshots) {
+    	res.send(screenshots);
+    });
 });
 
 router.get('/screenshot/:id', function(req, res) {
@@ -91,32 +103,77 @@ router.get('/screenshot/:id/download', function(req, res) {
 
 router.get('/releases', function(req, res) {
 	var collection = req.db.collection('usercollection');
-	collection.distinct('release', function(err, docs) {
-		res.send(docs);
+	var verified = req.query.verified;
+	var releases = [];
+	var filter = {};
+	
+	if (!verified || verified == "false") {
+		filter["verified"]=false;
+	}
+	
+	releases.push({'value': 'All Releases'});
+	console.log(filter)
+	console.log(verified)
+	collection.distinct('release', filter, function(err, docs) {
+		docs.forEach(function(doc) {
+			releases.push({'value':doc});
+		});
+		res.send(releases);
 	});
 });
 
 router.get('/classnames', function(req, res) {
-	if (req.query.release) {
-		var collection = req.db.collection('usercollection');
-		collection.distinct('classname', {'release':req.query.release}, function(err, docs) {
-			res.send(docs);
-		});
-	} else {
-		res.send('');
+	var release = req.query.release;
+	var verified = req.query.verified;
+	var filter = {};
+	
+	if (release && !(release=="All Releases")) {
+		filter["release"]=release;
 	}
+	
+	if (!verified || verified == "false") {
+		filter["verified"]=false;
+	}
+
+	var classnames = [];
+	classnames.push({'value': 'All Categories'});
+	var collection = req.db.collection('usercollection');
+	collection.distinct('classname', filter, function(err, docs) {
+		docs.forEach(function(doc) {
+			classnames.push({'value':doc});
+		});
+		res.send(classnames);
+	});
 });
 
 
 router.get('/testnames', function(req, res) {
-	if (req.query.release && req.query.classname) {
-		var collection = req.db.collection('usercollection');
-		collection.distinct('testname', {'release':req.query.release, 'classname':req.query.classname}, function(err, docs) {
-			res.send(docs);
-		});
-	} else {
-		res.send('');
+	var release = req.query.release;
+	var classname = req.query.classname;
+	var verified = req.query.verified;
+	var filter = {};
+		
+	if (release && !(release=="All Releases")) {
+		filter["release"]=release;
 	}
+	
+	if (classname && !(classname=="All Categories")) {
+		filter["classname"]=classname;
+	}
+	
+	if (!verified || verified == "false") {
+		filter["verified"]=false;
+	}
+	
+	var testnames = [];
+	testnames.push({'value': 'All Tests'});
+	var collection = req.db.collection('usercollection');
+	collection.distinct('testname', filter, function(err, docs) {
+		docs.forEach(function(doc) {
+			testnames.push({'value':doc});
+		});
+		res.send(testnames);
+	});
 });
 
 router.get('/', function(req, res, next) {

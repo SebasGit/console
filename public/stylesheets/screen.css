@@ -8,6 +8,7 @@ body {
     margin: 5px;
     padding: 5px 5px 5px 5px;
     text-align:center;
+    float:right;
 }
 
 .screenshotContainer {
@@ -25,15 +26,15 @@ body {
 
 .ssImage{
   width:auto;
-  height:30%;
+  height:auto%;
   max-height:500px;
   margin:20px;
 }
 
 .ssImage.ssImageMax{
   width:auto;
-  height:100%;
   max-height:10000px;
+  max-width:10000px;
   margin:20px;
   display:block;
 }

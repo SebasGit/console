@@ -1,36 +1,39 @@
-extends layout
-head
-
-
-block content
-  h1= title
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    title Sebas' Screenshots
+    link(rel='stylesheet', href='stylesheets/screen.css')
   body
-    //each screenshot, i in screenshots	
-     a.screenshots(href='/tools/screenshot/'+screenshot.ssId, data-lightbox='example-set', data-title=screenshot.testname)
-        img.screenshots(src='/tools/screenshot/'+screenshot.ssId, alt='')
-    #screenshots
-      .screenshotContainer
-        img(src='img/placeholder.png')
-        ul
-          li Title
-          li Author
-          li Release date
-          li Keywords
-      script#ssTemplate(type='text/template').
-        img src=<%= image >
-        ul
-        li<%= ssId >
-        li<%= release >
-        li<%= classname >
-        li<%= testname >
-        li<%= unverified >
-        
-
-
-
-
-script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js')
-script(src='http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js')
-script(src='http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js')
-script(src='http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js')
-script(src='/js/main.js')
+    #main
+      label
+        input.filter-verified(type='checkbox')
+        |  Show Verified
+      select#releases
+      select#classes
+      select#tests
+      | 	QE Name: 
+      select#qename
+        option Select Name
+        option(value='Richard') Richard
+        option(value='Scott') Scott
+        option(value='Eric') Eric
+        option(value='Thuan') Thuan
+        option(value='Varsha') Varsha
+        option(value='Sebas') Sebas
+      #screenshotList
+        div
+          script#screenshotTemplate(type='text/template').
+            <div class="labelContainer" value=<%= release%>><%= release%></div>
+            <div class="labelContainer" value=<%= classname%>><%= classname%></div>
+            <div class="labelContainer" value=<%= testname%>><%= testname%></div>
+            <br>
+            <img class="ssImage" src="tools/screenshot/<%= ssId%>/download"</>
+            <br>
+            <input type="image" src="unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
+            <input type="image" src="checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
+            <div class="labelContainer" value=<%= qename%>><%= qename%></div>
+          script(src='/js/jquery-1.11.3.min.js')
+          script(src='/js/underscore-min.js')
+          script(src='/js/backbone-min.js')
+          script(src='/js/main.js')

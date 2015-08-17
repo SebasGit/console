@@ -2,23 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Backbone.js Web App</title>
+    <title>Sebas' Screenshots</title>
     <link rel="stylesheet" href="stylesheets/screen.css">
 </head>
 <body>
-<div id="screenshots">
+<div id="main">
 	<label><input type="checkbox" class="filter-verified"/> Show Verified</label>
+	<select id="releases"></select>
+	<select id="classes"></select>
+	<select id="tests"></select>
+	QE Name: <select id="qename">
+		<option>Select Name</option>
+		<option value="Richard">Richard</option>
+		<option value="Scott">Scott</option>
+		<option value="Eric">Eric</option>
+		<option value="Thuan">Thuan</option>
+		<option value="Varsha">Varsha</option>
+		<option value="Sebas">Sebas</option>
+	</select>
 	<div id="screenshotList"/>
 <div/>
 <script id="screenshotTemplate" type="text/template">
-    <div class="labelContainer"><%= release%></div>
-    <div class="labelContainer"><%= classname%></div>
-    <div class="labelContainer"><%= testname%></div>
+    <div class="labelContainer" value=<%= release%>><%= release%></div>
+    <div class="labelContainer" value=<%= classname%>><%= classname%></div>
+    <div class="labelContainer" value=<%= testname%>><%= testname%></div>
     <br>
 	<img class="ssImage" src="tools/screenshot/<%= ssId%>/download"</>
 	<br>
-    <input type="image" src="unchecked.png" <% if (!unverified) { %> style="display:none" <% }%> class="verify"/>
-    <input type="image" src="checked.png" <% if (unverified) { %> style="display:none" <% }%> class="unverify"/>
+    <input type="image" src="unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
+    <input type="image" src="checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
+     <div class="labelContainer" value=<%= qename%>><%= qename%></div>
 </script>
 <script src="/js/jquery-1.11.3.min.js"></script>
 <script src="/js/underscore-min.js"></script>
