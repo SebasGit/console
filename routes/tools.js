@@ -120,8 +120,6 @@ router.get('/releases', function(req, res) {
 	}
 	
 	releases.push({'value': 'All Releases'});
-	console.log(filter)
-	console.log(verified)
 	collection.distinct('release', filter, function(err, docs) {
 		docs.forEach(function(doc) {
 			releases.push({'value':doc});

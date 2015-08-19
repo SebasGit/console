@@ -63,6 +63,7 @@
             });
             this.$el.find(this.options.parentSelect).append(optionView.$el);
             optionView.render();
+            Backbone.pubSub.trigger('filter');
         },
         
         renderOptions:function (parentSelect) {
@@ -71,6 +72,15 @@
         
         clearSelect: function() {
         	this.$el.find(this.options.parentSelect).empty();
+        },
+
+        events: {
+            'click .filter-verified': function(){this.renderOptions("all")},
+        	'change #releases': function(){this.renderOptions("#releases")},
+        	'change #pages': function(){this.renderOptions("#pages")},
+        	'change #classes' : function(){this.renderOptions("#classes")},
+        	'change #tests' : function(){Backbone.pubSub.trigger('filter');},
+        	'click #reset' : function(){Backbone.pubSub.trigger('filter');}
         },
 
         render:function () {
@@ -87,7 +97,6 @@
         			break;
     			}
 			}
-			Backbone.pubSub.trigger('filter');
         	return this;
         }
     });
@@ -145,19 +154,6 @@
         initialize:function () {
         	this.collection.on("reset", this.render, this);
         	Backbone.pubSub.on('filter', this.filter, this);
-        },
-        
-        events: {
-            'click .filter-verified': function(){this.updateOptions("all")},
-        	'change #releases': function(){this.updateOptions("#releases")},
-        	'change #pages': function(){this.updateOptions("#pages")},
-        	'change #classes' : function(){this.updateOptions("#classes")},
-        	'change #tests' : 'filter',
-        	'click #reset' : 'filter'
-        },
-        
-        updateOptions: function(origin) {
-        	Backbone.pubSub.trigger('renderOptions', origin);
         },
         
         clearScreen: function() {
