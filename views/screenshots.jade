@@ -6,23 +6,32 @@ html(lang='en')
     link(rel='stylesheet', href='../stylesheets/screen.css')
   body
     #main
-      label
-        input.filter-verified(type='checkbox')
-        |  Show Verified
-      select#releases
-      select#pages
-      select#classes
-      select#tests
-      | 	QE Name: 
-      select#qename
-        option Select Name
-        option(value='Richard') Richard
-        option(value='Scott') Scott
-        option(value='Eric') Eric
-        option(value='Thuan') Thuan
-        option(value='Varsha') Varsha
-        option(value='Sebas') Sebas
-      button#reset Reload
+      table
+        tr
+          td
+            label
+              input.filter-verified(type='checkbox')
+              |  Show Verified
+          td
+            select#releases
+          td
+            select#pages
+          td
+            select#classes
+          td
+            select#tests
+          td
+            |  QE Name: 
+            select#qename
+              option Select Name
+              option(value='Richard') Richard
+              option(value='Scott') Scott
+              option(value='Eric') Eric
+              option(value='Thuan') Thuan
+              option(value='Varsha') Varsha
+              option(value='Sebas') Sebas
+          td
+            button#reset Reload
       #screenshotList
         div
           script#screenshotTemplate(type='text/template').

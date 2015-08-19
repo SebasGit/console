@@ -2,6 +2,15 @@ body {
     background-color: #eee;
 }
 
+td {
+	padding:10px;
+}
+
+.optionContainer {
+	float:left;
+	padding: 5px 5px 5px 5px;
+}
+
 .labelContainer {
     border: 1px solid #aaa;
     background-color: #fff;

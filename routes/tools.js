@@ -132,14 +132,13 @@ router.get('/releases', function(req, res) {
 
 router.get('/pages', function(req, res) {
 	var release = req.query.release;
+	var classname = req.query.classname;
 	var verified = req.query.verified;
-	var classname = req.query.verified;
 	var filter = {};
 	
 	if (release && !(release=="All Releases")) {
 		filter["release"]=release;
 	}
-	
 		
 	if (classname && !(classname=="All Categories")) {
 		filter["classname"]=classname;

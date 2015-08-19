@@ -66,11 +66,7 @@
         },
         
         renderOptions:function (parentSelect) {
-        	if ((parentSelect != this.options.parentSelect 
-        			&& this.options.parentSelect != "#releases")
-        			|| parentSelect == "all") {
-        		this.getValues();
-        	}
+        	this.getValues();
         },
         
         clearSelect: function() {
@@ -78,11 +74,20 @@
         },
 
         render:function () {
+        	var selectValue = this.$el.find(this.options.parentSelect).val();
         	this.clearSelect();
         	var that = this;
         	_.each(this.collection.models, function(item) {
         		that.renderOption(item);
         	});
+        	var dd = document.getElementById(this.options.parentSelect.substr(1))
+        	for (var i = 0; i < dd.options.length; i++) {
+    			if (dd.options[i].text === selectValue) {
+        			dd.selectedIndex = i;
+        			break;
+    			}
+			}
+			Backbone.pubSub.trigger('filter');
         	return this;
         }
     });
@@ -99,10 +104,6 @@
 
 
         render:function () {
-        	if (!this.model.hasOwnProperty('page')) {
-        		this.model['page'] = '1';
-        	}
-        	console.log(this.model);
             var tmpl = _.template(this.template); 
             this.$el.html(tmpl(this.model.toJSON())); 
         	return this;
@@ -143,13 +144,14 @@
 
         initialize:function () {
         	this.collection.on("reset", this.render, this);
+        	Backbone.pubSub.on('filter', this.filter, this);
         },
         
         events: {
-            'click .filter-verified': function(){this.updateOptions("all"), this.filter()},
-        	'change #releases': function(){this.updateOptions("#releases"), this.filter()},
-        	'change #pages': function(){this.updateOptions("#pages"), this.filter()},
-        	'change #classes' : function(){this.updateOptions("#classes"), this.filter()},
+            'click .filter-verified': function(){this.updateOptions("all")},
+        	'change #releases': function(){this.updateOptions("#releases")},
+        	'change #pages': function(){this.updateOptions("#pages")},
+        	'change #classes' : function(){this.updateOptions("#classes")},
         	'change #tests' : 'filter',
         	'click #reset' : 'filter'
         },
