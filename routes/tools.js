@@ -17,7 +17,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	var testname = req.body.testname;
 	var number = req.body.number;
 	var collection = db.collection('usercollection');
-	collection.find({release: release, classname: classname, testname: testname}).toArray(function(err, screenshots) {
+	collection.find({release: release, classname: classname, testname: testname, number: number}).toArray(function(err, screenshots) {
 		screenshots.forEach(function(screenshot) {
 			console.log(screenshot.ssId);
 			gfs.remove({"_id":screenshot.ssId});
