@@ -51,8 +51,8 @@
             if (this.options.classname) {
             	options["classname"] = this.$el.find("#classes").val();
             }
-            if (this.options.pages) {
-            	options["pages"] = this.$el.find("pages").val();
+            if (this.options.page) {
+            	options["page"] = this.$el.find("#pages").val();
             }
         	this.collection.fetch({data:options, reset: true});
         },
@@ -99,6 +99,10 @@
 
 
         render:function () {
+        	if (!this.model.hasOwnProperty('page')) {
+        		this.model['page'] = '1';
+        	}
+        	console.log(this.model);
             var tmpl = _.template(this.template); 
             this.$el.html(tmpl(this.model.toJSON())); 
         	return this;
@@ -157,16 +161,18 @@
         clearScreen: function() {
         	this.$el.find("#screenshotList").empty();
         },
-        
+                 
         filter: function() {
         	var checked = this.$el.find(".filter-verified").is(":checked");
         	var releases = this.$el.find("#releases").val();
+        	var pages = this.$el.find("#pages").val();
         	var classnames = this.$el.find("#classes").val();
         	var testnames = this.$el.find("#tests").val();
         	this.collection.fetch({
         		data: {
         			verified:checked,
         			release:releases,
+        			page:pages,
         			classname:classnames,
         			testname:testnames
         		},
@@ -197,15 +203,15 @@
     releaseListView.getValues();
     
     var pageList = new PageList();
-    var pageListView = new OptionListView({collection:pageList, parentSelect:"#pages"});
+    var pageListView = new OptionListView({collection:pageList, parentSelect:"#pages", release: true, classname:true});
     pageListView.getValues();
     
     var classList = new ClassList();
-    var classListView = new OptionListView({collection:classList, parentSelect:"#classes", release:"release"});
+    var classListView = new OptionListView({collection:classList, parentSelect:"#classes", release:true, page:true});
     classListView.getValues();
     
     var testList = new TestList();
-    var testListView = new OptionListView({collection:testList, parentSelect:"#tests", release:"release", classname:"classname"});
+    var testListView = new OptionListView({collection:testList, parentSelect:"#tests", release:true, page:true, classname:true});
     testListView.getValues();
     
     var libraryCollection = new Library();

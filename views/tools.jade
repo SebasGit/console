@@ -1,8 +1,9 @@
 extends layout
 
 block content
-  form(method='post', enctype='multipart/form-data', action='screenshot')
+  form(method='post', enctype='multipart/form-data', action='tools/screenshot')
     input(type='text', name='release')
+    input(type='text', name='page')
     input(type='text', name='classname')
     input(type='text', name='testname')
     input(type='text', name='number')
