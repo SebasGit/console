@@ -3,13 +3,14 @@ html(lang='en')
   head
     meta(charset='UTF-8')
     title Sebas' Screenshots
-    link(rel='stylesheet', href='stylesheets/screen.css')
+    link(rel='stylesheet', href='../stylesheets/screen.css')
   body
     #main
       label
         input.filter-verified(type='checkbox')
         |  Show Verified
       select#releases
+      select#pages
       select#classes
       select#tests
       | 	QE Name: 
@@ -21,6 +22,7 @@ html(lang='en')
         option(value='Thuan') Thuan
         option(value='Varsha') Varsha
         option(value='Sebas') Sebas
+      button#reset Reload
       #screenshotList
         div
           script#screenshotTemplate(type='text/template').
@@ -28,10 +30,10 @@ html(lang='en')
             <div class="labelContainer" value=<%= classname%>><%= classname%></div>
             <div class="labelContainer" value=<%= testname%>><%= testname%></div>
             <br>
-            <img class="ssImage" src="tools/screenshot/<%= ssId%>/download"</>
+            <img class="ssImage" src="../tools/screenshot/<%= ssId%>/download"</>
             <br>
-            <input type="image" src="unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
-            <input type="image" src="checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
+            <input type="image" src="../unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
+            <input type="image" src="../checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
             <div class="labelContainer" value=<%= qename%>><%= qename%></div>
           script(src='/js/jquery-1.11.3.min.js')
           script(src='/js/underscore-min.js')

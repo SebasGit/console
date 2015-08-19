@@ -13,6 +13,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	db = req.db
 	var gfs = Grid(db, mongo);
 	var release = req.body.release;
+	var page = req.body.page;
 	var classname = req.body.classname;
 	var testname = req.body.testname;
 	var number = req.body.number;
@@ -32,6 +33,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 			"type" : "screenshot",
 			"ssId" : file._id.toString(),
 			"release" : release,
+			"page" : page,
 			"classname" : classname,
 			"testname" : testname,
 			"number" : number,
@@ -74,6 +76,10 @@ router.get('/screenshot', function(req, res) {
 	
 	if (req.query.release && !(req.query.release=="All Releases")) {
 		params["release"] = req.query.release;
+	}
+	
+	if (req.query.page && !(req.query.page=="All Pages")) {
+		params["page"] = req.query.page;
 	}
 	
 	if (req.query.classname && !(req.query.classname=="All Categories")) {
@@ -124,13 +130,48 @@ router.get('/releases', function(req, res) {
 	});
 });
 
-router.get('/classnames', function(req, res) {
+router.get('/pages', function(req, res) {
 	var release = req.query.release;
 	var verified = req.query.verified;
+	var classname = req.query.verified;
 	var filter = {};
 	
 	if (release && !(release=="All Releases")) {
 		filter["release"]=release;
+	}
+	
+		
+	if (classname && !(classname=="All Categories")) {
+		filter["classname"]=classname;
+	}
+	
+	if (!verified || verified == "false") {
+		filter["verified"]=false;
+	}
+
+	var classnames = [];
+	classnames.push({'value': 'All Pages'});
+	var collection = req.db.collection('usercollection');
+	collection.distinct('page', filter, function(err, docs) {
+		docs.forEach(function(doc) {
+			classnames.push({'value':doc});
+		});
+		res.send(classnames);
+	});
+});
+
+router.get('/classnames', function(req, res) {
+	var release = req.query.release;
+	var verified = req.query.verified;
+	var page = req.query.page;
+	var filter = {};
+	
+	if (release && !(release=="All Releases")) {
+		filter["release"]=release;
+	}
+	
+	if (page && !(page=="All Pages")) {
+		filter["page"]=page;
 	}
 	
 	if (!verified || verified == "false") {
@@ -151,12 +192,17 @@ router.get('/classnames', function(req, res) {
 
 router.get('/testnames', function(req, res) {
 	var release = req.query.release;
+	var page = req.query.page;
 	var classname = req.query.classname;
 	var verified = req.query.verified;
 	var filter = {};
 		
 	if (release && !(release=="All Releases")) {
 		filter["release"]=release;
+	}
+	
+	if (page && !(page=="All Pages")) {
+		filter["page"]=page;
 	}
 	
 	if (classname && !(classname=="All Categories")) {

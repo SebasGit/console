@@ -10,6 +10,10 @@
         url:'../tools/releases'
     });
     
+    var PageList = Backbone.Collection.extend({
+        url:'../tools/pages'
+    });
+    
     var ClassList = Backbone.Collection.extend({
         url:'../tools/classnames'
     });
@@ -46,6 +50,9 @@
             }
             if (this.options.classname) {
             	options["classname"] = this.$el.find("#classes").val();
+            }
+            if (this.options.pages) {
+            	options["pages"] = this.$el.find("pages").val();
             }
         	this.collection.fetch({data:options, reset: true});
         },
@@ -137,8 +144,10 @@
         events: {
             'click .filter-verified': function(){this.updateOptions("all"), this.filter()},
         	'change #releases': function(){this.updateOptions("#releases"), this.filter()},
+        	'change #pages': function(){this.updateOptions("#pages"), this.filter()},
         	'change #classes' : function(){this.updateOptions("#classes"), this.filter()},
-        	'change #tests' : 'filter'
+        	'change #tests' : 'filter',
+        	'click #reset' : 'filter'
         },
         
         updateOptions: function(origin) {
@@ -186,6 +195,10 @@
     var releaseList = new ReleaseList();
     var releaseListView = new OptionListView({collection:releaseList, parentSelect:"#releases"});
     releaseListView.getValues();
+    
+    var pageList = new PageList();
+    var pageListView = new OptionListView({collection:pageList, parentSelect:"#pages"});
+    pageListView.getValues();
     
     var classList = new ClassList();
     var classListView = new OptionListView({collection:classList, parentSelect:"#classes", release:"release"});
