@@ -15,6 +15,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	var release = req.body.release;
 	var classname = req.body.classname;
 	var testname = req.body.testname;
+	var number = req.body.number;
 	var collection = db.collection('usercollection');
 	collection.find({release: release, classname: classname, testname: testname}).toArray(function(err, screenshots) {
 		screenshots.forEach(function(screenshot) {
