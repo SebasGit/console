@@ -136,8 +136,8 @@
         
         events: {
             'click .filter-verified': function(){this.updateOptions("all"), this.filter()},
-        	'change #releases': function(){this.updateOptions("#releases")},
-        	'change #classes' : function(){this.updateOptions("#classes")},
+        	'change #releases': function(){this.updateOptions("#releases"), this.filter()},
+        	'change #classes' : function(){this.updateOptions("#classes"), this.filter()},
         	'change #tests' : 'filter'
         },
         
