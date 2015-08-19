@@ -33,6 +33,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 			"release" : release,
 			"classname" : classname,
 			"testname" : testname,
+			"number" : number,
 			"verified" : false
 		});
     });
