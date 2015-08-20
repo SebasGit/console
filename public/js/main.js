@@ -63,40 +63,26 @@
             });
             this.$el.find(this.options.parentSelect).append(optionView.$el);
             optionView.render();
-            Backbone.pubSub.trigger('filter');
         },
         
         renderOptions:function (parentSelect) {
-        	this.getValues();
+        	if ((parentSelect != this.options.parentSelect 
+        			&& this.options.parentSelect != "#releases")
+        			|| parentSelect == "all") {
+        		this.getValues();
+        	}
         },
         
         clearSelect: function() {
         	this.$el.find(this.options.parentSelect).empty();
         },
 
-        events: {
-            'click .filter-verified': function(){this.renderOptions("all")},
-        	'change #releases': function(){this.renderOptions("#releases")},
-        	'change #pages': function(){this.renderOptions("#pages")},
-        	'change #classes' : function(){this.renderOptions("#classes")},
-        	'change #tests' : function(){Backbone.pubSub.trigger('filter');},
-        	'click #reset' : function(){Backbone.pubSub.trigger('filter');}
-        },
-
         render:function () {
-        	var selectValue = this.$el.find(this.options.parentSelect).val();
         	this.clearSelect();
         	var that = this;
         	_.each(this.collection.models, function(item) {
         		that.renderOption(item);
         	});
-        	var dd = document.getElementById(this.options.parentSelect.substr(1))
-        	for (var i = 0; i < dd.options.length; i++) {
-    			if (dd.options[i].text === selectValue) {
-        			dd.selectedIndex = i;
-        			break;
-    			}
-			}
         	return this;
         }
     });
@@ -153,7 +139,19 @@
 
         initialize:function () {
         	this.collection.on("reset", this.render, this);
-        	Backbone.pubSub.on('filter', this.filter, this);
+        },
+        
+        events: {
+            'click .filter-verified': function(){this.updateOptions("all"), this.filter()},
+        	'change #releases': function(){this.updateOptions("#releases"), this.filter()},
+        	'change #pages': function(){this.updateOptions("#pages"), this.filter()},
+        	'change #classes' : function(){this.updateOptions("#classes"), this.filter()},
+        	'change #tests' : 'filter',
+        	'click #reset' : 'filter'
+        },
+        
+        updateOptions: function(origin) {
+        	Backbone.pubSub.trigger('renderOptions', origin);
         },
         
         clearScreen: function() {

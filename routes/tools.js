@@ -20,7 +20,6 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	var collection = db.collection('usercollection');
 	collection.find({release: release, classname: classname, testname: testname, number: number}).toArray(function(err, screenshots) {
 		screenshots.forEach(function(screenshot) {
-			console.log(screenshot.ssId);
 			gfs.remove({"_id":screenshot.ssId});
 			collection.remove({"_id":screenshot._id});
 		});
