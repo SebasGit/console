@@ -117,16 +117,21 @@
 
         verifyScreenshot:function () {
         	var qename=$('html,body').find("#qename").val();
-        	if (qename) {
+        	var checked = $('html,body').find(".hide-when-verified").is(":checked");
+        	if (qename && qename != "Select Name") {
         		this.model.save({verified: true, qename:qename});
             	this.$el.find(".verify").hide()
             	this.$el.find(".unverify").show()
+        	}
+        	if (checked) {
+        		this.remove();
+        		this.unbind();
         	}
         },
         
         unverifyScreenshot:function () {
         	var qename=$('html,body').find("#qename").val();
-        	if (qename) {
+        	if (qename && qename != "Select Name") {
         		this.model.save({verified: false, qename:qename});
             	this.$el.find(".verify").show()
             	this.$el.find(".unverify").hide()

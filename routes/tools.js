@@ -35,6 +35,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 			"page" : page,
 			"classname" : classname,
 			"testname" : testname,
+			"qename": "",
 			"number" : number,
 			"verified" : false
 		});
