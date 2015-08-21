@@ -36,19 +36,21 @@ html(lang='en')
             label
               input.hide-when-verified(type='checkbox')
               |  Remove When Verified
+          td
+            button.sizeController#increase Increase Screenshot Size
+          td
+            button.sizeController#decrease Decrease Screenshot Size
       #screenshotList
         div
           script#screenshotTemplate(type='text/template').
+            <input type="image" src="../unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
+            <input type="image" src="../checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
             <div class="labelContainer" value=<%= release%>><%= release%></div>
             <div class="labelContainer" value=<%= page%>><%= page%></div>
             <div class="labelContainer" value=<%= classname%>><%= classname%></div>
             <div class="labelContainer" value=<%= testname%>><%= testname%></div>
-            <br>
-            <img class="ssImage" src="../tools/screenshot/<%= ssId%>/download"</>
-            <br>
-            <input type="image" src="../unchecked.png" <% if (verified) { %> style="display:none" <% }%> class="verify"/>
-            <input type="image" src="../checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
             <div class="labelContainer" value=<%= qename%>><%= qename%></div>
+            <img class="ssImage" src="../tools/screenshot/<%= ssId%>/download"</>
           script(src='/js/jquery-1.11.3.min.js')
           script(src='/js/underscore-min.js')
           script(src='/js/backbone-min.js')

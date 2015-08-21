@@ -22,6 +22,51 @@
         url:'../tools/testnames'
     });
     
+    var WatcherView = Backbone.View.extend({
+    	el:$("#main"),
+    	
+    	events: {
+    	    'click .filter-verified': 'rerenderFilter',
+        	'change #releases': 'rerenderRelease',
+        	'change #pages': 'rerenderPages',
+        	'change #classes' : 'rerenderClasses',
+        	'change #tests' : 'rerenderTests',
+        },
+        
+        //the timeouts :(
+        //they have to go
+        rerenderFilter: function() {
+        	releaseListView.getValues();
+        	pageListView.getValues();
+        	classListView.getValues();
+        	testListView.getValues();
+        	setTimeout(function() { libraryView.filter() }, 200);
+       },
+        
+        rerenderRelease: function() {
+        	pageListView.getValues();
+        	classListView.getValues();
+        	testListView.getValues();
+        	setTimeout(function() { libraryView.filter() }, 200);
+        },
+        
+        rerenderPages: function() {
+        	classListView.getValues();
+        	testListView.getValues();
+        	setTimeout(function() { libraryView.filter() }, 200);
+        },
+        
+        rerenderClasses: function() {
+        	testListView.getValues();
+        	setTimeout(function() { libraryView.filter() }, 200);
+        },
+        
+        rerenderTests: function() {
+        	setTimeout(function() { libraryView.filter() }, 200);
+        }
+    });
+    	
+    
     var OptionView = Backbone.View.extend({
         tagName:"option",
 
@@ -78,12 +123,19 @@
         },
 
         render:function () {
+        	var selectValue = this.$el.find(this.options.parentSelect).val();
         	this.clearSelect();
         	var that = this;
         	_.each(this.collection.models, function(item) {
         		that.renderOption(item);
         	});
-        	return this;
+        	var dd = document.getElementById(this.options.parentSelect.substr(1))
+        	for (var i = 0; i < dd.options.length; i++) {
+    			if (dd.options[i].text === selectValue) {
+        			dd.selectedIndex = i;
+        			break;
+    			}
+			}
         }
     });
 
@@ -112,7 +164,9 @@
         
         maximize:function () {
         	this.$el.find(".ssImage").toggleClass('ssImageMax');
+        	this.$el.toggleClass('ssImageMax');
         	$('html,body').animate({scrollTop: this.$el.offset().top}, 500);
+        	
         },
 
         verifyScreenshot:function () {
@@ -147,12 +201,57 @@
         },
         
         events: {
-            'click .filter-verified': function(){this.updateOptions("all"), this.filter()},
-        	'change #releases': function(){this.updateOptions("#releases"), this.filter()},
-        	'change #pages': function(){this.updateOptions("#pages"), this.filter()},
-        	'change #classes' : function(){this.updateOptions("#classes"), this.filter()},
-        	'change #tests' : 'filter',
-        	'click #reset' : 'filter'
+        	'click #reset' : 'filter',
+            "click #increase": "increaseSize",
+            "click #decrease": "decreaseSize"
+        },
+        
+        increaseSize: function() {
+        	var maxWidth = this.$el.find(".ssImage").css('max-width');
+        	if (parseInt(maxWidth) < 1500) {
+        		this.$el.find(".ssImage").css('max-width', parseInt(maxWidth)+100+'px');
+        	}
+        	
+        	maxWidth = $(".screenshotContainer").css('max-width');
+        	if (parseInt(maxWidth) < 1600) {
+        		$(".screenshotContainer").css('max-width', parseInt(maxWidth)+100+'px');
+        	}
+        	
+        	var height = this.$el.find(".verify").css('height');
+        	if (parseInt(height) < 150) {
+        		this.$el.find(".verify").css('height', parseInt(height)+8+'px');
+				this.$el.find(".unverify").css('height', parseInt(height)+8+'px');
+        	}
+        	
+        	var fontSize = this.$el.find(".labelContainer").css('font-size');
+        	if (parseInt(fontSize) < 16) {
+        	    this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)+2+'px');
+				this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)+2+'px');
+        	}
+        },
+        
+        decreaseSize: function() {
+        	var maxWidth = $(".ssImage").css('max-width');
+        	if (parseInt(maxWidth) > 100) {
+        		this.$el.find(".ssImage").css('max-width', parseInt(maxWidth)-100+'px');
+        	}
+        	
+        	maxWidth = $(".screenshotContainer").css('max-width');
+        	if (parseInt(maxWidth) > 200) {
+        		this.$el.find(".screenshotContainer").css('max-width', parseInt(maxWidth)-100+'px'); 
+        	}    	
+        	
+        	var height = this.$el.find(".verify").css('height');
+        	if (parseInt(height) > 50) {
+        		this.$el.find(".verify").css('height', parseInt(height)-8+'px');
+				this.$el.find(".unverify").css('height', parseInt(height)-8+'px');
+        	}
+        	
+        	var fontSize = this.$el.find(".labelContainer").css('font-size');
+        	if (parseInt(fontSize) > 10) {
+        	    this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)-2+'px');
+				this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)-2+'px');
+        	}
         },
         
         updateOptions: function(origin) {
@@ -218,5 +317,7 @@
     var libraryCollection = new Library();
     var libraryView = new LibraryView({collection:libraryCollection});
     libraryView.filter();
+    
+    var WatcherView = new WatcherView();
 
 })(jQuery);
