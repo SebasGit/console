@@ -25,7 +25,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 		});
 	});
 	var writestream = gfs.createWriteStream({ 
-	    filename: req.file.originalname;
+	    filename: req.file.originalname
 	});
 	writestream.on('close', function (file) {
 		collection.insert({
