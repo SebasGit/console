@@ -180,6 +180,7 @@
         	}
         	if (checked) {
         		this.remove();
+        		libraryView.checkScroll();
         		this.unbind();
         	}
         },
@@ -269,11 +270,11 @@
         
         //infinite scrolling
         checkScroll: function () {
-        	triggerPoint = 100;
 			if( !this.isLoading && $(window).scrollTop() + $(window).height() + triggerPoint > $(document).height() ) {
 				this.collection.batch += 1; // Load next page
 				this.filter();
         	}
+
     	},
                  
         filter: function() {
@@ -292,7 +293,12 @@
         			testname:testnames,
         			batch:this.collection.batch
         		},
-        		reset: true
+        		reset: true,
+        		success: function(res) {
+        			if (res.length < 15) {
+						triggerPoint = -100;
+        			}
+        		}
         	});
         	this.isLoading = false;
         },
@@ -313,6 +319,8 @@
         	return this;
         }
     });
+    
+    var triggerPoint = 100;
     
     var releaseList = new ReleaseList();
     var releaseListView = new OptionListView({collection:releaseList, parentSelect:"#releases"});
