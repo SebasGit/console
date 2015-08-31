@@ -40,29 +40,29 @@
         	pageListView.getValues();
         	classListView.getValues();
         	testListView.getValues();
-        	setTimeout(function() { libraryView.filter() }, 200);
+        	setTimeout(function() { libraryView.clearAndRender() }, 200);
        },
         
         rerenderRelease: function() {
         	pageListView.getValues();
         	classListView.getValues();
         	testListView.getValues();
-        	setTimeout(function() { libraryView.filter() }, 200);
+        	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderPages: function() {
         	classListView.getValues();
         	testListView.getValues();
-        	setTimeout(function() { libraryView.filter() }, 200);
+        	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderClasses: function() {
         	testListView.getValues();
-        	setTimeout(function() { libraryView.filter() }, 200);
+        	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderTests: function() {
-        	setTimeout(function() { libraryView.filter() }, 200);
+        	setTimeout(function() { libraryView.clearAndRender() }, 200);
         }
     });
     	
@@ -141,6 +141,7 @@
 
     var Library = Backbone.Collection.extend({
         model:Screenshot,
+        batch:1,
         url:'../tools/screenshot'
     });
 
@@ -197,13 +198,16 @@
         el:$("#main"),
 
         initialize:function () {
+        	this.isLoading = false;
         	this.collection.on("reset", this.render, this);
+        	_.bindAll(this, 'checkScroll');
+        	$(window).scroll(this.checkScroll);
         },
         
         events: {
-        	'click #reset' : 'filter',
+        	'click #reset' : 'clearAndRender',
             "click #increase": "increaseSize",
-            "click #decrease": "decreaseSize"
+            "click #decrease": "decreaseSize",
         },
         
         increaseSize: function() {
@@ -258,11 +262,22 @@
         	Backbone.pubSub.trigger('renderOptions', origin);
         },
         
-        clearScreen: function() {
+        clearAndRender: function() {
         	this.$el.find("#screenshotList").empty();
+        	this.filter();
         },
+        
+        //infinite scrolling
+        checkScroll: function () {
+        	triggerPoint = 100;
+			if( !this.isLoading && $(window).scrollTop() + $(window).height() + triggerPoint > $(document).height() ) {
+				this.collection.batch += 1; // Load next page
+				this.filter();
+        	}
+    	},
                  
         filter: function() {
+         	this.isLoading = true;
         	var checked = this.$el.find(".filter-verified").is(":checked");
         	var releases = this.$el.find("#releases").val();
         	var pages = this.$el.find("#pages").val();
@@ -274,10 +289,12 @@
         			release:releases,
         			page:pages,
         			classname:classnames,
-        			testname:testnames
+        			testname:testnames,
+        			batch:this.collection.batch
         		},
         		reset: true
         	});
+        	this.isLoading = false;
         },
 
         renderScreenshot:function (item) {
@@ -289,7 +306,6 @@
         },
 
         render:function () {
-        	this.clearScreen();
         	var that = this;
         	_.each(this.collection.models, function(item) {
         		that.renderScreenshot(item);

@@ -73,6 +73,11 @@ router.put('/screenshot/:id', function(req, res) {
 router.get('/screenshot', function(req, res) {
 	var params = {type: "screenshot"};
 	var collection = req.db.collection('usercollection');
+	var options = {
+		"limit": 8,
+		"skip": (req.query.batch-1)*8,
+		"sort": "_id"
+	}
 	if (req.query.verified == "false") {
 		params["verified"] = false;
 	}
@@ -93,7 +98,7 @@ router.get('/screenshot', function(req, res) {
 		params["testname"] = req.query.testname;
 	}
     
-    collection.find(params, {sort: {_id: 1}}).toArray(function(err, screenshots) {
+    collection.find(params, options).toArray(function(err, screenshots) {
     	res.send(screenshots);
     });
 });
