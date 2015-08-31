@@ -40,6 +40,8 @@
         	pageListView.getValues();
         	classListView.getValues();
         	testListView.getValues();
+        	libraryView.collection.batch = 1;
+        	triggerPoint = 100;
         	setTimeout(function() { libraryView.clearAndRender() }, 200);
        },
         
@@ -47,21 +49,29 @@
         	pageListView.getValues();
         	classListView.getValues();
         	testListView.getValues();
+        	libraryView.collection.batch = 1;
+        	triggerPoint = 100;
         	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderPages: function() {
         	classListView.getValues();
         	testListView.getValues();
+        	libraryView.collection.batch = 1;
+        	triggerPoint = 100;
         	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderClasses: function() {
         	testListView.getValues();
+        	libraryView.collection.batch = 1;
+        	triggerPoint = 100;
         	setTimeout(function() { libraryView.clearAndRender() }, 200);
         },
         
         rerenderTests: function() {
+        	libraryView.collection.batch = 1;
+        	triggerPoint = 100;
         	setTimeout(function() { libraryView.clearAndRender() }, 200);
         }
     });
@@ -284,6 +294,7 @@
         	var pages = this.$el.find("#pages").val();
         	var classnames = this.$el.find("#classes").val();
         	var testnames = this.$el.find("#tests").val();
+        	console.log(this.collection.batch)
         	this.collection.fetch({
         		data: {
         			verified:checked,
@@ -295,7 +306,7 @@
         		},
         		reset: true,
         		success: function(res) {
-        			if (res.length < 15) {
+        			if (res.length < 5) {
 						triggerPoint = -100;
         			}
         		}

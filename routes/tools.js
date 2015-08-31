@@ -74,8 +74,8 @@ router.get('/screenshot', function(req, res) {
 	var params = {type: "screenshot"};
 	var collection = req.db.collection('usercollection');
 	var options = {
-		"limit": 15,
-		"skip": (req.query.batch-1)*15,
+		"limit": 5,
+		"skip": (req.query.batch-1)*5,
 		"sort": "_id"
 	}
 	if (req.query.verified == "false") {
