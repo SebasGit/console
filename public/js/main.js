@@ -1,9 +1,8 @@
 (function ($) {
 
-	Backbone.pubSub = _.extend({}, Backbone.Events);
-
     var Screenshot = Backbone.Model.extend({
-        idAttribute  : "ssId"
+        idAttribute  : "ssId",
+        urlRoot: "../tools/screenshot"
     });
 
     var ReleaseList = Backbone.Collection.extend({
@@ -93,7 +92,6 @@
         initialize:function (options) {
         	this.options = options;
         	this.collection.on("reset", this.render, this);
-        	Backbone.pubSub.on('renderOptions', this.renderOptions, this);
         },
         
         getValues: function() {
@@ -269,10 +267,6 @@
         	}
         },
         
-        updateOptions: function(origin) {
-        	Backbone.pubSub.trigger('renderOptions', origin);
-        },
-        
         clearAndRender: function() {
         	this.$el.find("#screenshotList").empty();
         	this.filter();
@@ -294,7 +288,6 @@
         	var pages = this.$el.find("#pages").val();
         	var classnames = this.$el.find("#classes").val();
         	var testnames = this.$el.find("#tests").val();
-        	console.log(this.collection.batch)
         	this.collection.fetch({
         		data: {
         			verified:checked,
