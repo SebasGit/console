@@ -1,8 +1,7 @@
 (function ($) {
 
     var Screenshot = Backbone.Model.extend({
-        idAttribute  : "ssId",
-        urlRoot: "../tools/screenshot"
+        idAttribute  : "ssId"
     });
 
     var ReleaseList = Backbone.Collection.extend({
@@ -209,6 +208,7 @@
         initialize:function () {
         	this.isLoading = false;
         	this.collection.on("reset", this.render, this);
+        	this.collection.on("add", this.renderScreenshot, this);
         	_.bindAll(this, 'checkScroll');
         	$(window).scroll(this.checkScroll);
         },
@@ -269,19 +269,19 @@
         
         clearAndRender: function() {
         	this.$el.find("#screenshotList").empty();
-        	this.filter();
+        	this.filter(true);
         },
         
         //infinite scrolling
         checkScroll: function () {
 			if( !this.isLoading && $(window).scrollTop() + $(window).height() + triggerPoint > $(document).height() ) {
 				this.collection.batch += 1; // Load next page
-				this.filter();
+				this.filter(false);
         	}
 
     	},
                  
-        filter: function() {
+        filter: function(reset) {
          	this.isLoading = true;
         	var checked = this.$el.find(".filter-verified").is(":checked");
         	var releases = this.$el.find("#releases").val();
@@ -297,7 +297,8 @@
         			testname:testnames,
         			batch:this.collection.batch
         		},
-        		reset: true,
+        		reset: reset,
+        		remove: reset,
         		success: function(res) {
         			if (res.length < 5) {
 						triggerPoint = -100;
@@ -314,7 +315,7 @@
             this.$el.find("#screenshotList").append(screenshotView.$el);
             screenshotView.render();
         },
-
+        
         render:function () {
         	var that = this;
         	_.each(this.collection.models, function(item) {
@@ -344,7 +345,7 @@
     
     var libraryCollection = new Library();
     var libraryView = new LibraryView({collection:libraryCollection});
-    libraryView.filter();
+    libraryView.filter(true);
     
     var WatcherView = new WatcherView();
 
