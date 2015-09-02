@@ -31,12 +31,21 @@ html(lang='en')
               option(value='Thuan') Thuan
               option(value='Varsha') Varsha
               option(value='Sebas') Sebas
-          td
-            button#reset Reload
+
+          div.verifyAll
+            label(for='verify') Verify All Displayed
+            input#verifyAll(type='image', src='../checked.png')
+          div.unverifyAll
+            label(for='unverify') Unverify All Displayed
+            input#unverifyAll(type='image', src='../unchecked.png')
+      table
+        tr
           td
             label
               input.hide-when-verified(type='checkbox')
               |  Remove When Verified
+          td
+            button#reset Reload
           td
             button.sizeController#increase Increase Screenshot Size
           td

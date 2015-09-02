@@ -6,8 +6,9 @@ td {
 	padding:5px;
 }
 
-.sizeController {
-	height: 30px;
+button {
+	height: 35px;
+	width: 120px;
 }
 
 .optionContainer {
@@ -64,9 +65,49 @@ td {
 	float:left;
 }
 
+.hidden {
+	display: none;
+}
+
 .unverify {
 	margin: 10px;
 	height:70px;
 	width:auto;
 	float:left;
+}
+
+#unverifyAll {
+	margin: 10px;
+	height:50px;
+	width:auto;
+}
+
+div.unverifyAll {
+	float: right;
+}
+
+div.unverifyAll input {
+	vertical-align: middle;
+}
+
+div.unverifyAll label{
+	vertical-align: middle;
+}
+
+#verifyAll {
+	margin: 10px;
+	height:50px;
+	width:auto;
+}
+
+div.verifyAll {
+	float: right;
+}
+
+div.verifyAll input {
+	vertical-align: middle;
+}
+
+div.verifyAll label{
+	vertical-align: middle;
 }

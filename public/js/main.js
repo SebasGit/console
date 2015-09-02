@@ -215,8 +215,46 @@
         
         events: {
         	'click #reset' : 'clearAndRender',
-            "click #increase": "increaseSize",
-            "click #decrease": "decreaseSize",
+            'click #increase': 'increaseSize',
+            'click #decrease': 'decreaseSize',
+            'click #verifyAll': 'verifyAll',
+            'click #unverifyAll': 'unverifyAll'
+        },
+        
+        verifyAll:function () {
+        	var qename=$('html,body').find("#qename").val();
+        	var checked = $('html,body').find(".hide-when-verified").is(":checked");
+        	if (qename && qename != "Select Name") {
+        		_.each(this.collection.models, function(item) {
+        			var screenshotView = new ScreenshotView({model:item});
+        			screenshotView.model.save({verified: true, qename:qename});
+
+        		});
+        	    if (checked) {
+					this.clearAndRender();
+        		} else {
+        			this.$el.find('.verify').hide();
+        			this.$el.find('.unverify').show();
+        		}
+        	} 
+        },
+        
+        unverifyAll:function () {
+        	var qename=$('html,body').find("#qename").val();
+        	var checked = $('html,body').find(".hide-when-verified").is(":checked");
+        	if (qename && qename != "Select Name") {
+        		_.each(this.collection.models, function(item) {
+        			var screenshotView = new ScreenshotView({model:item});
+        			screenshotView.model.save({verified: false, qename:qename});
+
+        		});
+        	    if (checked) {
+					this.clearAndRender();
+        		} else {
+        			this.$el.find('.verify').show();
+        			this.$el.find('.unverify').hide();
+        		}
+        	} 
         },
         
         increaseSize: function() {
