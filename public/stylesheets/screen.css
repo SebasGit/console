@@ -6,6 +6,10 @@ td {
 	padding:5px;
 }
 
+select {
+	max-width: 200;
+}
+
 button {
 	height: 35px;
 	width: 120px;
