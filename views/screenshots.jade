@@ -9,10 +9,6 @@ html(lang='en')
       table
         tr
           td
-            label
-              input.filter-verified(type='checkbox')
-              |  Show Verified
-          td
             select#releases
           td
             select#pages
@@ -42,6 +38,10 @@ html(lang='en')
         tr
           td
             label
+              input.filter-verified(type='checkbox')
+              |  Show Verified
+          td
+            label
               input.hide-when-verified(type='checkbox')
               |  Remove When Verified
           td
@@ -50,6 +50,16 @@ html(lang='en')
             button.sizeController#increase Increase Screenshot Size
           td
             button.sizeController#decrease Decrease Screenshot Size
+      table
+        tr
+          td
+            label#currentDisplayed 0
+          td
+            tabel /
+          td
+            label#total 0
+          td
+            label Total
       #screenshotList
         div
           script#screenshotTemplate(type='text/template').

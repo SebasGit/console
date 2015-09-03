@@ -103,6 +103,36 @@ router.get('/screenshot', function(req, res) {
     });
 });
 
+router.get('/screenshot/total', function(req, res) {
+	var params = {type: "screenshot"};
+	var collection = req.db.collection('usercollection');
+	var total = {};
+	if (req.query.verified == "false") {
+		params["verified"] = false;
+	}
+	
+	if (req.query.release && !(req.query.release=="All Releases")) {
+		params["release"] = req.query.release;
+	}
+	
+	if (req.query.page && !(req.query.page=="All Pages")) {
+		params["page"] = req.query.page;
+	}
+	
+	if (req.query.classname && !(req.query.classname=="All Categories")) {
+		params["classname"] = req.query.classname;
+	}
+	
+	if (req.query.testname && !(req.query.testname=="All Tests")) {
+		params["testname"] = req.query.testname;
+	}
+    
+    collection.count(params, function(err, screenshots) {
+    	total["total"] = screenshots.toString();
+    	res.send(total);
+    });
+});
+
 router.get('/screenshot/:id', function(req, res) {
 	var collection = req.db.collection('usercollection');
     collection.findOne({ssId: req.params.id}, function(err, screenshot) {

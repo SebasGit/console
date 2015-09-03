@@ -3,6 +3,10 @@
     var Screenshot = Backbone.Model.extend({
         idAttribute  : "ssId"
     });
+    
+    var TotalCount = Backbone.Model.extend({
+    	url: '../tools/screenshot/total'
+    });
 
     var ReleaseList = Backbone.Collection.extend({
         url:'../tools/releases'
@@ -341,9 +345,23 @@
         			if (res.length < 5) {
 						triggerPoint = -100;
         			}
+        			$('#currentDisplayed').text(res.length.toString());
         		}
         	});
+        	if (reset) {
+        		this.updateTotal();
+        	}
         	this.isLoading = false;
+        },
+        
+        updateTotal: function() {
+        	var totalCount = new TotalCount();
+        	totalCount.fetch({
+        		success: function(res) {
+        			$("#total").text(res.get('total'))
+        		}
+        	});
+        	
         },
 
         renderScreenshot:function (item) {
