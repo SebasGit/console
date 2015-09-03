@@ -356,7 +356,19 @@
         
         updateTotal: function() {
         	var totalCount = new TotalCount();
+        	var checked = this.$el.find(".filter-verified").is(":checked");
+        	var releases = this.$el.find("#releases").val();
+        	var pages = this.$el.find("#pages").val();
+        	var classnames = this.$el.find("#classes").val();
+        	var testnames = this.$el.find("#tests").val();
         	totalCount.fetch({
+        	    data: {
+        			verified:checked,
+        			release:releases,
+        			page:pages,
+        			classname:classnames,
+        			testname:testnames
+        		},
         		success: function(res) {
         			$("#total").text(res.get('total'))
         		}
