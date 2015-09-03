@@ -342,7 +342,7 @@
         		reset: reset,
         		remove: reset,
         		success: function(res) {
-        			if (res.length < 5) {
+        			if (res.length < 15) {
 						triggerPoint = -100;
         			}
         			$('#currentDisplayed').text(res.length.toString());
