@@ -316,6 +316,7 @@
         
         //infinite scrolling
         checkScroll: function () {
+        	triggerPoint = 100;
 			if( !this.isLoading && $(window).scrollTop() + $(window).height() + triggerPoint > $(document).height() ) {
 				this.collection.batch += 1; // Load next page
 				this.filter(false);
