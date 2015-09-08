@@ -49,6 +49,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
     	res.send('OK');
   	})
   	.on('error', function() {
+  		fs.unlink(req.file.path);
   		res.send('ERR');
  	})
     .pipe(writestream);
