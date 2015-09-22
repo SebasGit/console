@@ -323,6 +323,23 @@
         	}
         },
         
+        checkSize: function() {
+        	//infinite scrolling adds models, this makes sure they are all the same size (TODO: maybe add a css rule instead?)
+        	var maxWidth = $(".ssImage").css('max-width');
+        	this.$el.find(".ssImage").css('max-width', parseInt(maxWidth)+'px');
+        	
+        	maxWidth = $(".screenshotContainer").css('max-width');
+        	this.$el.find(".screenshotContainer").css('max-width', parseInt(maxWidth)+'px'); 	
+        	
+        	var height = this.$el.find(".verify").css('height');
+        	this.$el.find(".verify").css('height', parseInt(height)+'px');
+			this.$el.find(".unverify").css('height', parseInt(height)+'px');
+        	
+        	var fontSize = this.$el.find(".labelContainer").css('font-size');
+        	this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)+'px');
+			this.$el.find(".labelContainer").css('font-size', parseInt(fontSize)+'px');
+        },
+        
         clearAndRender: function() {
         	this.$el.find("#screenshotList").empty();
         	this.filter(true);
@@ -360,6 +377,7 @@
 						triggerPoint = -100;
         			}
         			$('#currentDisplayed').text(res.length.toString());
+        			libraryView.checkSize();
         		}
         	});
         	if (reset) {
