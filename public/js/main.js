@@ -1,3 +1,15 @@
+//so this was my first backbone project and it isn't architected well at all
+// ScreenshotView handles each screenshot and the objects next to it
+// Library View handles most of the events on the page
+// OptionsView is shared by the dropdowns
+//
+//issues:
+// 1. The dropdowns should have their own collection instead of sharing one
+// 2. The watcherView deals with one of the side effects of this, which was that rendering was happening in the wrong order
+// 3. Referencing objects directly is a no no, instead the collections should be watching each other to see what happens
+// 
+// no plans to refactor, instead it will be rebuilt when new requirements come in
+
 (function ($) {
 
     var Screenshot = Backbone.Model.extend({
@@ -193,6 +205,8 @@
         		this.remove();
         		libraryView.checkScroll();
         		this.unbind();
+        		libraryView.collection.remove(this.model);
+        		$('#currentDisplayed').text(libraryView.collection.length);
         	}
         },
         
