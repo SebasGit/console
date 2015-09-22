@@ -18,12 +18,16 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	var testname = req.body.testname;
 	var number = req.body.number;
 	var collection = db.collection('usercollection');
-	collection.find({release: release, classname: classname, testname: testname, number: number}).toArray(function(err, screenshots) {
-		screenshots.forEach(function(screenshot) {
-			gfs.remove({"_id":screenshot.ssId});
-			collection.remove({"_id":screenshot._id});
+	try {
+		collection.find({release: release, classname: classname, testname: testname, number: number}).toArray(function(err, screenshots) {
+			screenshots.forEach(function(screenshot) {
+				gfs.remove({"_id":screenshot.ssId});
+				collection.remove({"_id":screenshot._id});
+			});
 		});
-	});
+	} catch() {
+		console.log(err);
+	}
 	var writestream = gfs.createWriteStream({ 
 	    filename: req.file.originalname
 	});

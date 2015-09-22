@@ -33,7 +33,7 @@ button {
 .screenshotContainer {
     border: 1px solid #aaa;
     background-color: #fff;
-    float: left;
+    float: right;
     margin: 5px;
     max-width: 450px;
 }

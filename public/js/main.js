@@ -207,6 +207,8 @@
         		this.unbind();
         		libraryView.collection.remove(this.model);
         		$('#currentDisplayed').text(libraryView.collection.length);
+        		$("#total").text(String(parseInt($("#total").text())-1))
+        		
         	}
         },
         
