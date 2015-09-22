@@ -25,7 +25,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 				collection.remove({"_id":screenshot._id});
 			});
 		});
-	} catch() {
+	} catch(err) {
 		console.log(err);
 	}
 	var writestream = gfs.createWriteStream({ 
