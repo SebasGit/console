@@ -183,7 +183,17 @@
         events: {
             "click .verify": "verifyScreenshot",
             "click .unverify": "unverifyScreenshot",
-            "click .ssImage": "maximize"
+            "click .ssImage": "maximize",
+            "change #comment": "updateComment"
+        },
+        
+        updateComment: function() {
+        	var qename=$('html,body').find("#qename").val();
+        	var comment=this.$el.find("#comment").val();
+        	console.log(comment);
+        	if (qename && qename != "Select Name") {
+        		this.model.save({comment: comment, qename:qename});
+        	}
         },
         
         maximize:function () {

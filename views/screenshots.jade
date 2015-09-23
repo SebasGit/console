@@ -66,6 +66,7 @@ html(lang='en')
             <input type="image" src="../checked.png" <% if (!verified) { %> style="display:none" <% }%> class="unverify"/>
             <div class="labelContainer" value=<%= page%>><%= page%></div>
             <div class="labelContainer" value=<%= classname%>><%= classname%></div>
+            <input class = "labelContainer" placeholder="Enter Comment" id="comment" value=<%= comment%>></input>
             <img class="ssImage" src="../tools/screenshot/<%= ssId%>/download"</>
             <div class="labelContainer" value=<%= release%>><%= release%></div>
             <div class="labelContainer" value=<%= testname%>><%= testname%></div>

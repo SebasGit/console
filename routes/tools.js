@@ -17,6 +17,7 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 	var classname = req.body.classname;
 	var testname = req.body.testname;
 	var number = req.body.number;
+	var comment = req.body.comment;
 	var collection = db.collection('usercollection');
 	try {
 		collection.find({release: release, classname: classname, testname: testname, number: number}).toArray(function(err, screenshots) {
@@ -41,7 +42,8 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 			"testname" : testname,
 			"qename": "",
 			"number" : number,
-			"verified" : false
+			"verified" : false,
+			"comment" : comment
 		});
     });
     writestream.on('error', function (err) {
@@ -61,10 +63,11 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 
 router.put('/screenshot/:id', function(req, res) {
 	var collection = req.db.collection('usercollection');
-	
+	console.log(req.body.comment);
 	collection.update({ssId:req.body.ssId}, {$set: {
 			"verified" : req.body.verified,
-			"qename" : req.body.qename
+			"qename" : req.body.qename,
+			"comment" : req.body.comment
 	}}, function (err, doc) {
 		if (err) {
 			res.send("failed to update");
@@ -104,6 +107,14 @@ router.get('/screenshot', function(req, res) {
 	}
     
     collection.find(params, options).toArray(function(err, screenshots) {
+    
+    	screenshots.forEach(function(screenshot) {
+    		if (screenshot.comment == undefined) {
+    			screenshot["comment"] = "";
+    		}
+    		
+    	});
+    	console.log(screenshots);
     	res.send(screenshots);
     });
 });
