@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(expressMongoDb('mongodb://jenkinsqa.corp.dotloop.com/console'));
+app.use(expressMongoDb('mongodb://localhost/console'));
 
 app.use('/', routes);
 app.use('/tools', tools);
