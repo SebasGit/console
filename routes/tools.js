@@ -63,7 +63,6 @@ router.post('/screenshot', upload.single('file'), function (req, res, next) {
 
 router.put('/screenshot/:id', function(req, res) {
 	var collection = req.db.collection('usercollection');
-	console.log(req.body.comment);
 	collection.update({ssId:req.body.ssId}, {$set: {
 			"verified" : req.body.verified,
 			"qename" : req.body.qename,
@@ -114,7 +113,6 @@ router.get('/screenshot', function(req, res) {
     		}
     		
     	});
-    	console.log(screenshots);
     	res.send(screenshots);
     });
 });
