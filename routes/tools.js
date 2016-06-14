@@ -79,10 +79,12 @@ router.put('/screenshot/:id', function(req, res) {
 
 router.get('/screenshot', function(req, res) {
 	var params = {type: "screenshot"};
+	var params2 = {type: "screenshot"};
 	var collection = req.db.collection('usercollection');
+	var collection2 = req.db.collection('usercollection');
 	var options = {
-		"limit": 15,
-		"skip": (req.query.batch-1)*15,
+//		"limit": 15,
+		"skip": (req.query.batch-1),//*15,
 		"sort": "_id"
 	}
 	if (req.query.verified == "false") {
@@ -108,12 +110,41 @@ router.get('/screenshot', function(req, res) {
     collection.find(params, options).toArray(function(err, screenshots) {
     
     	screenshots.forEach(function(screenshot) {
-    		if (screenshot.comment == undefined) {
+    		if (screenshot.comment === undefined) {
     			screenshot["comment"] = "";
     		}
-    		
+
+    		console.log(screenshot);
     	});
     	res.send(screenshots);
+    });
+});
+
+router.get('/screenshot/lastverified', function(req, res) {
+	var params = {type: "screenshot"};
+	var collection = req.db.collection('usercollection');
+	var options = {
+		"sort": ["_id", "desc"]
+	};
+	
+	params["verified"] = true;
+	
+	if (req.query.page && !(req.query.page=="All Pages")) {
+		params["page"] = req.query.page;
+	}
+
+	params["classname"] = req.query.classname;
+	params["testname"] = req.query.testname;
+    
+    collection.findOne(params, function(err, screenshot) {
+
+    	if (screenshot) {
+	    	var gfs = Grid(req.db, mongo);
+			res.set('Content-Type', 'image/jpeg');
+	    	gfs.createReadStream({ _id:screenshot.ssId}).pipe(res);
+    	} else {
+    		res.status(404).send();
+    	}
     });
 });
 

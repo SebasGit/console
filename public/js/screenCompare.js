@@ -13,13 +13,41 @@ var data = [
 	]
 
 var MainComponent = React.createClass({
+  getInitialState: function() {
+    return {selectedRelease: "All Releases", selectedPage: "All Pages", selectedTest: "All Tests", data: data};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: "/tools/screenshot",
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  onReleaseSelected: function(release) {
+    this.setState({ selectedRelease: release });
+  },
+
+  onPageSelected: function(page) {
+    this.setState({ selectedPage: page });
+  },
+
+  onTestSelected: function(test) {
+    this.setState({ selectedTest: test })
+  },
+
   render: function() {
     return (
       <div>
-        <ReleaseDropdown/>
-        <PageDropdown/>
-        <TestnameDropdown/>
-        <SSBox/>
+        <ReleaseDropdown onReleaseSelected={this.onReleaseSelected} />
+        <PageDropdown onPageSelected={this.onPageSelected} />
+        <TestnameDropdown onTestSelected={this.onTestSelected} />
+        <SSBox selectedRelease={this.state.selectedRelease} selectedPage={this.state.selectedPage} selectedTest={this.state.selectedTest} data={this.state.data} />
       </div>
     );
   }
@@ -27,9 +55,10 @@ var MainComponent = React.createClass({
 
 var ReleaseDropdown = React.createClass({
   getInitialState: function() {
-    return {data: []};
+    return {data: [], onReleaseSelected: this.props.onReleaseSelected};
   },
   componentDidMount: function() {
+
     $.ajax({
       url: "/tools/releases",
       dataType: 'json',
@@ -44,14 +73,14 @@ var ReleaseDropdown = React.createClass({
   },
   render: function() {
     return (
-        <ReleaseList data={this.state.data} />
+        <ReleaseList data={this.state.data} onReleaseSelected={this.state.onReleaseSelected}/>
     );
   }
 })
 
 var ReleaseList = React.createClass({
-
   render: function() {
+    var that = this;
     var options = this.props.data.map(function(option) {
       return (
           <option key={option.value} value={option.value}>
@@ -67,14 +96,14 @@ var ReleaseList = React.createClass({
     );
   },
   handleChange: function(e) {
-    this.setState({selected: e.target.value})
-    MainComponent.render;
+    this.props.onReleaseSelected(e.target.value);
+    this.setState({selected: e.target.value});
   }
 });
 
 var PageDropdown = React.createClass({
   getInitialState: function() {
-    return {data: []};
+    return {data: [], onPageSelected: this.props.onPageSelected};
   },
   componentDidMount: function() {
     $.ajax({
@@ -91,7 +120,7 @@ var PageDropdown = React.createClass({
   },
   render: function() {
     return (
-        <PageList data={this.state.data} />
+        <PageList data={this.state.data} onPageSelected={this.state.onPageSelected} />
     );
   }
 })
@@ -101,7 +130,7 @@ var PageList = React.createClass({
   render: function() {
     var options = this.props.data.map(function(option) {
       return (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} onClick={function() {that.props.onClick(option.value)}}>
               {option.value}
           </option>
       )
@@ -115,60 +144,14 @@ var PageList = React.createClass({
     );
   },
   handleChange: function(e) {
-    this.setState({selected: e.target.value})
-  }
-});
-
-var ClassnameDropdown = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: "/tools/classnames",
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  render: function() {
-    return (
-        <TNList data={this.state.data} />
-    );
-  }
-})
-
-var CNList = React.createClass({
-
-  render: function() {
-    var options = this.props.data.map(function(option) {
-      return (
-          <option key={option.value} value={option.value}>
-              {option.value}
-          </option>
-      )
-    });
-    return (
-      <select 
-          onChange={this.handleChange}
-          value={this.selected}>
-        {options}
-      </select>
-    );
-  },
-  handleChange: function(e) {
+    this.props.onPageSelected(e.target.value);
     this.setState({selected: e.target.value})
   }
 });
 
 var TestnameDropdown = React.createClass({
   getInitialState: function() {
-    return {data: []};
+    return {data: [], onTestSelected: this.props.onTestSelected};
   },
   componentDidMount: function() {
     $.ajax({
@@ -185,7 +168,7 @@ var TestnameDropdown = React.createClass({
   },
   render: function() {
     return (
-        <TNList data={this.state.data} />
+        <TNList data={this.state.data} onTestSelected={this.state.onTestSelected} />
     );
   }
 })
@@ -209,42 +192,50 @@ var TNList = React.createClass({
     );
   },
   handleChange: function(e) {
+    this.props.onTestSelected(e.target.value);
     this.setState({selected: e.target.value})
   }
 });
 
 var SSBox = React.createClass({
-	getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: "/tools/screenshot",
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
   render: function() {
     return (
-        <SSList data={this.state.data} />
+        <SSList data={this.props.data} selectedTest={this.props.selectedTest} selectedRelease={this.props.selectedRelease} selectedPage={this.props.selectedPage}/>
     );
   }
 });
 
 var SSList = React.createClass({
   render: function() {
-    var ssNodes = this.props.data.map(function(ss) {
-    	var ssUrl = "../tools/screenshot/"+ss.ssId+"/download";
-      return (
-        <SS classname={ss.classname} key={ss.ssId} ssUrl={ssUrl} release={ss.release} page={ss.page} testname={ss.testname} qename={ss.qename} verified={ss.verified}/>
-      );
-    });
+    var { selectedRelease, selectedPage, selectedTest, data } = this.props;
+
+    // data.forEach((ss) => {
+    //   if ((ss.release == selectedRelease || selectedRelease == "All Releases") && (ss.page == selectedPage || selectedPage == "All Pages") && (ss.testname == selectedTest || selectedTest == "All Tests")) {
+    //     var ssUrl = "../tools/screenshot/"+ss.ssId+"/download";
+    //     var ssLastVerifiedUrl = "../tools/screenshot/"+ss.Id+"lastverified";
+    //     var screenshot = (
+    //       <SS classname={ss.classname} key={ss.ssId} ssUrl={ssUrl} ssLastVerifiedUrl={ssLastVerifiedUrl} release={ss.release} page={ss.page} testname={ss.testname} qename={ss.qename} verified={ss.verified}/>
+    //     );
+
+    //     ssNodes.push(screenshot);
+    //   }
+    // });
+
+    var ssNodes = data.reduce((prev, ss) => {
+      if ((ss.release == selectedRelease || selectedRelease == "All Releases") && (ss.page == selectedPage || selectedPage == "All Pages") && (ss.testname == selectedTest || selectedTest == "All Tests")) {
+        var ssUrl = `../tools/screenshot/${ss.ssId}/download`;
+        var ssLastVerifiedUrl = `../tools/screenshot/lastverified?testname=${ss.testname}+classname=${ss.classname}`;
+
+        var screenshot = (
+          <SS classname={ss.classname} key={ss.ssId} ssUrl={ssUrl} ssLastVerifiedUrl={ssLastVerifiedUrl} release={ss.release} page={ss.page} testname={ss.testname} qename={ss.qename} verified={ss.verified}/>
+        );
+
+        prev.push(screenshot);
+      }
+
+      return prev;
+    }, [])
+
     return (
       <div className="SSList">
         {ssNodes}
@@ -254,51 +245,47 @@ var SSList = React.createClass({
 });
 
 var SS = React.createClass({
+  getInitialState: function() {
+    return {
+      ssLastVerifiedUrl: this.props.ssLastVerifiedUrl,
+      ssComparisonUrl: this.props.comparisonUrl
+    }
+  },
   rawMarkup: function() {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
     return { __html: rawMarkup };
   },
   render: function() {
+    const ssLastVerifiedUrl = this.state.ssLastVerifiedUrl;
+    const ssComparisonUrl = this.state.comparisonUrl;
+
     return (
-      <div className="ss">
-      	<div className = "ssContainer">
-      		<h2 className = "labelContainer">{this.props.classname}</h2>
-          <h2 className = "labelContainer">{this.props.release}</h2>
-          <h2 className = "labelContainer">{this.props.page}</h2>
-          <h2 className = "labelContainer">{this.props.testname}</h2>
-          <h2 className = "labelContainer">{this.props.qename}</h2>
-          <h2 className = "labelContainer">{this.props.verified}</h2>
+      <div className="ss" >
+        <h2 className ="labelContainer">{this.props.release}</h2>
+        <h2 className ="labelContainer">{this.props.classname}</h2>
+        <h2 className ="labelContainer">{this.props.page}</h2>
+        <h2 className ="labelContainer">{this.props.testname}</h2>
+        <h2 className ="labelContainer">{this.props.qename}</h2>
+        <h2 className ="labelContainer">{this.props.verified}</h2>
+        <div className ="ssContainer">
         	<img className="ssImage" src={this.props.ssUrl} />
+          <img className="ssImage" src={ssLastVerifiedUrl} onError={() => {
+            this.setState({
+              ssLastVerifiedUrl: "404.gif"
+            })
+          }.bind(this)}/>
+          <img className="ssImage" src={ssComparisonUrl} onError={() => {
+            this.setState({
+              ssComparisonUrl: "404.gif"
+            })
+          }.bind(this)}/>
+          />
         </div>
       </div>
+
     );
   }
 });
-
-// var FruitSelector = React.createClass({
-//     getInitialState:function(){
-//         return {selectValue:'Orange'};
-//     },
-//     handleChange:function(e){
-//         this.setState({selectValue:e.target.value});
-//     },
-//     render: function() {
-//         var message='You selected '+this.state.selectValue;
-//         return (
-//         <div>
-//          <select value={this.state.selectValue} 
-//          onChange={this.handleChange} 
-//          >
-//             <option value="Orange">Orange</option>
-//             <option value="Radish">Radish</option>
-//             <option value="Cherry">Cherry</option>
-//           </select>
-//           <p>{message}</p>
-//           </div>        
-//         );
-//     }
-// });
-
 
 ReactDOM.render(
   <MainComponent/>,
