@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(expressMongoDb('mongodb://localhost/console'));
+app.use(expressMongoDb('mongodb://172.24.100.90/console'));
 
 app.use('/', routes);
 app.use('/tools', tools);
