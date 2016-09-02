@@ -6,6 +6,7 @@ var Grid = require('gridfs-stream');
 var mongo = require('mongodb');
 var fs = require('fs');
 var router = express.Router();
+var resemble = require('node-resemble-js')
 var child1;
 var child2;
 
@@ -115,56 +116,94 @@ router.get('/screenshot', function(req, res) {
       if (screenshot.comment === undefined) {
         screenshot["comment"] = "";
       }
-
-      params["verified"] = true;
-
-      if (screenshot.classname && !(screenshot.classname === "All Classes")) {
-          params["classname"] = screenshot.classname;
-      }
-
-      var options2 = {
-          "sort": ["_id", "desc"]
-      };
-
-      params["page"] = screenshot.page;
-      params["testname"] = screenshot.testname;
-
-      collection2.findOne(params, function(err, screenshot2) {
-          screenshot["lastverified"] = screenshot2 === undefined ? "404.gif" : "tools/" + screenshot2.ssId + "/download";
-      });
     });
 
     res.send(screenshots);
   });
 });
 
-router.get('/screenshot/lastverified', function(req, res) {
+router.get('/screenshot/:id/lastverified', function(req, res) {
   var params = {type: "screenshot"};
   var collection = req.db.collection('usercollection');
-  var options = {
-    "sort": ["_id", "desc"]
-  };
-  
-  params["verified"] = true;
-  
-  if (req.query.page && !(req.query.page=="All Pages")) {
-    params["page"] = req.query.page;
-  }
-
-  params["classname"] = req.query.classname;
-  params["testname"] = req.query.testname;
     
-    collection.findOne(params, function(err, screenshot) {
+  collection.findOne({ssId: req.params.id}, function(err, screenshot) {
 
-      if (screenshot) {
-        var gfs = Grid(req.db, mongo);
-      res.set('Content-Type', 'image/jpeg');
-        gfs.createReadStream({ _id:screenshot.ssId}).pipe(res);
-      } else {
-        res.status(404).send();
-      }
-    });
+    if (screenshot) {
+      var options = {
+        "sort": ["_id", "desc"]
+      };
+      
+      params["verified"] = true;
+      params["page"] = screenshot.page;
+      params["testname"] = screenshot.testname;
+      collection.findOne(params, function(err, screenshot2) {
+        if (screenshot2) {
+          var gfs = Grid(req.db, mongo);
+          res.set('Content-Type', 'image/jpeg');
+          gfs.createReadStream({ _id:screenshot2.ssId}).pipe(res);
+        };
+      })
+    } else {
+      res.status(404).send();
+    }
+  });
 });
+
+router.get('/screenshot/:id/comparison', function (req, res) {
+  var params = {type: "screenshot"};
+  var collection = req.db.collection('usercollection');
+    
+  collection.findOne({ssId: req.params.id}, function(err, screenshot) {
+
+    if (screenshot) {
+        var options = {
+          "sort": ["_id", "desc"]
+        };
+        
+        params["verified"] = true;
+
+        params["page"] = screenshot.page;
+        params["testname"] = screenshot.testname;
+        //params["number"] = screenshot.number;
+          
+          collection.findOne(params, function(err, screenshot2) {
+            if (screenshot2) {
+              var gfs = Grid(req.db, mongo);
+              var stream1 = gfs.createReadStream({ _id:screenshot.ssId});
+              var stream2 = gfs.createReadStream({ _id:screenshot2.ssId});
+              const chunks1 = [];
+              const chunks2 = [];
+
+              stream1.on("data", function (chunk1) {
+                chunks1.push(chunk1);
+              });
+              stream2.on("data", function (chunk2) {
+                chunks2.push(chunk2);
+              });
+
+              stream1.on("end", function () {
+                stream2.on("end", function () {
+                  var api = resemble(Buffer.concat(chunks1)).compareTo(Buffer.concat(chunks2)).onComplete(function(data){
+                    //res.set('Content-Type', 'image/jpeg');
+                    data.getDiffImage().pack().pipe(res);
+                  });
+                });
+              });
+
+
+
+
+            } else {
+              res.status(404).send();
+            }
+          });
+    } else {
+      res.status(404).send();
+    }
+  });
+
+});
+
 
 router.get('/screenshot/total', function(req, res) {
   var params = {type: "screenshot"};
@@ -206,7 +245,8 @@ router.get('/screenshot/:id', function(req, res) {
 router.get('/screenshot/:id/download', function(req, res) {
   var gfs = Grid(req.db, mongo);
   res.set('Content-Type', 'image/jpeg');
-    gfs.createReadStream({ _id:req.params.id}).pipe(res);
+  var file = gfs.createReadStream({ _id:req.params.id})
+  file.pipe(res);
 });
 
 
@@ -216,9 +256,9 @@ router.get('/releases', function(req, res) {
   var releases = [];
   var filter = {};
   
-  if (!verified || verified == "false") {
-    filter["verified"]=false;
-  }
+  // if (!verified || verified == "false") {
+  //   filter["verified"]=false;
+  // }
   
   releases.push({'value': 'All Releases'});
   collection.distinct('release', filter, function(err, docs) {
@@ -243,9 +283,9 @@ router.get('/pages', function(req, res) {
     filter["classname"]=classname;
   }
   
-  if (!verified || verified == "false") {
-    filter["verified"]=false;
-  }
+  // if (!verified || verified == "false") {
+  //   filter["verified"]=false;
+  // }
 
   var classnames = [];
   classnames.push({'value': 'All Pages'});
@@ -272,9 +312,9 @@ router.get('/classnames', function(req, res) {
     filter["page"]=page;
   }
   
-  if (!verified || verified == "false") {
-    filter["verified"]=false;
-  }
+  // if (!verified || verified == "false") {
+  //   filter["verified"]=false;
+  // }
 
   var classnames = [];
   classnames.push({'value': 'All Categories'});
@@ -307,9 +347,9 @@ router.get('/testnames', function(req, res) {
     filter["classname"]=classname;
   }
   
-  if (!verified || verified == "false") {
-    filter["verified"]=false;
-  }
+  // if (!verified || verified == "false") {
+  //   filter["verified"]=false;
+  // }
   
   var testnames = [];
   testnames.push({'value': 'All Tests'});

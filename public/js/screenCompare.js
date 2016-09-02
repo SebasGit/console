@@ -43,6 +43,7 @@ var MainComponent = React.createClass({
   onTestSelected: function(test) {
     this.setState({ selectedTest: test })
   },
+  //        
   render: function() {
     return (
       <div>
@@ -219,18 +220,17 @@ var SSList = React.createClass({
       data 
     } = this.props;
 
-    var ssNodes = data.reduce((prev, ss) => {
+    var ssNodes = data.reduce((prev, ss, index, array) => {
       if ((ss.release == selectedRelease || selectedRelease == "All Releases") && (ss.page == selectedPage || selectedPage == "All Pages") && (ss.testname == selectedTest || selectedTest == "All Tests")) {
+
         var ssUrl = `../tools/screenshot/${ss.ssId}/download`;
-        var ssLastVerifiedUrl = `../tools/screenshot/lastverified?testname=${ss.testname}+classname=${ss.classname}`;
-
+        var ssLastVerifiedUrl = `../tools/screenshot/${ss.ssId}/lastverified`;
+        var ssComparisonUrl = `../tools/screenshot/${ss.ssId}/comparison`;
         var screenshot = (
-          <SS classname={ss.classname} key={ss.ssId} ssUrl={ssUrl} ssLastVerifiedUrl={ssLastVerifiedUrl} release={ss.release} page={ss.page} testname={ss.testname} qename={ss.qename} verified={ss.verified}/>
+          <SS classname={ss.classname} key={ss.ssId} ssUrl={ssUrl} ssLastVerifiedUrl={ssLastVerifiedUrl} ssComparisonUrl = {ssComparisonUrl} release={ss.release} page={ss.page} testname={ss.testname} qename={ss.qename} verified={ss.verified}/>
         );
-
         prev.push(screenshot);
       }
-
       return prev;
     }, [])
 
@@ -246,7 +246,7 @@ var SS = React.createClass({
   getInitialState: function() {
     return {
       ssLastVerifiedUrl: this.props.ssLastVerifiedUrl,
-      ssComparisonUrl: this.props.comparisonUrl || ''
+      ssComparisonUrl: this.props.ssComparisonUrl || ''
     }
   },
   render: function() {
@@ -262,10 +262,9 @@ var SS = React.createClass({
         <img className="ssImage" src={props.src} onError={props.onError} />
       )
     }
-
+    console.log(this.props.ssUrl.length);
     return (
       <div className="ss">
-        <Header value={this.props.release} />
         <Header value={this.props.release} />
         <Header value={this.props.classname} />
         <Header value={this.props.page} />
